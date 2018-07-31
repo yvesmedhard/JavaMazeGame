@@ -1,0 +1,5 @@
+/nbproject/private/
+/dist/
+*.class
+build/classes/labirinth/engine/Cell.class
+build/classes/labirinth/engine/Core.class

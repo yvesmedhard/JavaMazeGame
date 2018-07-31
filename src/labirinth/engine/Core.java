@@ -11,20 +11,27 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+
 // @author yvesmedhard
+
 public class Core {
   Display display;
+  Renderer renderer;
   InputMethods inputMethods;
+  Maze maze;
   boolean stopGame;
+  String gameState;
   
   public Core(){
     setup();
   }
   
   private void setup(){
-    stopGame = false;
     display = new Display();
     inputMethods = new InputMethods(this);
+
+    gameState = "maze";
+    maze = new Maze("maze1.txt");
     
     //Sets the input listeners on display
     display.setKeyListener(inputMethods);
@@ -34,10 +41,12 @@ public class Core {
   }
   
   public void start() throws InterruptedException{
+    stopGame = false;
     display.setVisible(true);
-    display.toFullscreen8x6();
+//    display.toFullscreen8x6();
     display.setBStrategy();
-    
+    renderer = new Renderer(this.display);
+
     gameLoop();
   }
   
@@ -51,9 +60,9 @@ public class Core {
     while (!stopGame) {
       // Updates game state
       updateGame();
-      //Draws game on Display
+      // Draws game on Display
       drawGame();
-      // Wait's till next frame
+      // Wait till next frame
       try {
         Thread.sleep(42);
       } catch (InterruptedException ex) {
@@ -67,6 +76,7 @@ public class Core {
   }
   
   public void drawGame(){
-    
+    renderer.drawMaze(maze, display);
+    display.getBstrategy().show();
   }
 }
