@@ -2,12 +2,10 @@ package labirinth.engine;
 
 // @author yvesmedhard
 
-import java.awt.List;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Maze {
   Cell[][] cells;
@@ -40,11 +38,11 @@ public class Maze {
       int mazeSize = Integer.parseInt(line);
       loadMaze = new Cell[mazeSize][mazeSize];
       
+      int rowIndex = 0;
       while((line = bufferedReader.readLine()) != null) {
-        int rowIndex = 0;
         int colIndex = 0;
         for (char ch: line.toCharArray()) {
-          Cell cell = new Cell(ch, rowIndex, colIndex);
+          Cell cell = new Cell(String.valueOf(ch), rowIndex, colIndex);
           loadMaze[rowIndex][colIndex] = cell;
           colIndex++;
         }
@@ -63,6 +61,26 @@ public class Maze {
             + mazeFile + "'");                  
     }
     return loadMaze;
+  }
+  
+  public Cell getCell(int posX, int posY){
+    Cell cell = null;
+    if(posX >= 0 && posX < size && posY >= 0 && posY < size){
+      cell = cells[posX][posY];
+    }
+    return cell;
+  }
+  
+  public Cell getStartCell(){
+    Cell startCell = null;
+    for (Cell[] row: cells) {
+      for (Cell cell: row) {
+        if(cell.isStart()){
+          startCell = cell;
+        }
+      }
+    }
+    return startCell;
   }
   
   public Cell[][] getCells(){

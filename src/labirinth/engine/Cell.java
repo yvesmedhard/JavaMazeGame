@@ -1,14 +1,12 @@
 package labirinth.engine;
 // @author yvesmedhard
 
-import java.awt.Point;
-
 public class Cell {
-  char type;
+  String type;
   int row;
   int col;
   
-  public Cell(char type, int rowIndex, int colIndex) {
+  public Cell(String type, int rowIndex, int colIndex) {
     this.type = type;
     this.row = rowIndex;
     this.col =  colIndex;
@@ -17,40 +15,59 @@ public class Cell {
   public String getType(){
     String result = null;
     switch (type) {
-      case 'p':
+      case "p":
         result = "path";
         break;
-      case 'w':
+      case "w":
         result = "wall";
         break;
-      case 's':
+      case "s":
         result = "start";
         break;
-      case 'e':
+      case "e":
         result = "exit";
         break;
     }
     return result;
   }
   
-  public char getRawType(){
+  public String getConsoleChar(){
+    String result = null;
+    switch (type) {
+      case "p":
+        result = " ";
+        break;
+      case "w":
+        result = "#";
+        break;
+      case "s":
+        result = "S";
+        break;
+      case "e":
+        result = "E";
+        break;
+    }
+    return result;
+  }
+  
+  public String getRawType(){
     return type;
   }
   
   public boolean isWall(){
-    return type == 'w';
+    return type.equals("w");
   }
   
   public boolean isExit(){
-    return type == 'e';
+    return type.equals("e");
   }
   
   public boolean isPath(){
-    return type == 'p';
+    return type.equals("p");
   }
   
   public boolean isStart(){
-    return type == 's';
+    return type.equals("s");
   }
   
   public int getRow(){

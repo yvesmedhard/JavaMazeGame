@@ -1,4 +1,4 @@
-package io;
+package labirinth.io;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
@@ -20,7 +20,7 @@ public class Display extends JFrame {
     oldDisplayMode = graphicsDevice.getDisplayMode();
     newDisplayMode = new DisplayMode(800, 600, 32, 60);
     this.setLayout(null);
-    this.setBounds(0, 0, 800, 600);
+    this.setBounds((oldDisplayMode.getWidth()/2) - 400, (oldDisplayMode.getHeight()/2) - 300, 800, 600);
     this.setUndecorated(true);
   }
 
