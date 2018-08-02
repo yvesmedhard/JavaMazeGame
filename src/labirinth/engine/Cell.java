@@ -5,6 +5,7 @@ public class Cell {
   String type;
   int row;
   int col;
+  boolean visited;
   
   public Cell(String type, int rowIndex, int colIndex) {
     this.type = type;
@@ -50,6 +51,10 @@ public class Cell {
     return result;
   }
   
+  public void visit(){
+    visited = true;
+  }
+  
   public String getRawType(){
     return type;
   }
@@ -75,5 +80,9 @@ public class Cell {
   }
   public int getCol(){
     return col;
+  }
+
+  boolean isVisited() {
+    return visited;
   }
 }

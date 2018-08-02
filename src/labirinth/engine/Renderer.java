@@ -21,8 +21,18 @@ public class Renderer {
     g2d.setColor(Color.white);        
     for (Cell[] row: maze.getCells()) {
       for (Cell cell: row) {
-        g2d.drawString(cell.getConsoleChar(), cell.getCol() * 10, (cell.getRow() + 1) * 10);
+        drawCell(g2d, cell);
       }
+    }
+  }
+  
+  public void drawCell(Graphics2D g2d, Cell cell){
+    if(cell.isVisited()){
+      g2d.setColor(Color.yellow); 
+      g2d.drawString("*", cell.getCol() * 10, (cell.getRow() + 1) * 10); 
+    }else{
+      g2d.setColor(Color.white);        
+      g2d.drawString(cell.getConsoleChar(), cell.getCol() * 10, (cell.getRow() + 1) * 10); 
     }
   }
   

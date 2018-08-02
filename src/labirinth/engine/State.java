@@ -22,20 +22,17 @@ public class State {
   private void updateHeroPosition(){
     String direction = hero.getMoveDirection();
     if(direction != null){
-      System.out.println("Moving Hero");
-      
+
       Cell cell = nextCell(direction);
       if(cell != null){
         if(cell.isPath() || cell.isStart()){
-          
-          System.out.println("Updated Position");
           hero.setPosition(cell.row, cell.col);
+          cell.visit();
           win = false;
           setOngoing(true);
         }else if(cell.isExit()){
-         
-          System.out.println("Win Game");
           hero.setPosition(cell.row, cell.col);
+          cell.visit();
           win = true;
           setOngoing(false);
         }
