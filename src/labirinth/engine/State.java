@@ -2,46 +2,59 @@ package labirinth.engine;
 
 // @author yvesmedhard
 
+import labirinth.players.Hero;
 import java.awt.Point;
+import java.util.ArrayList;
+import labirinth.players.Npc;
 
 
 public class State {
-  private Hero hero;
+  private ArrayList<Hero> heroes;
+  private ArrayList<Npc> npcs;
+  private ArrayList<TimeTrial> timeTrials;
   private Maze maze;
   private boolean win;  
   private boolean ongoing;
+  private String currentState;
   
   public void updateGameState(){
-    updateHero();
+    updateHeroes();
+    updateNpcs();
+    updateCurrentTimeTrial();
   }
   
-  private void updateHero(){
-    updateHeroPosition();
+  private void updateHeroes(){
+    heroes.forEach((hero) -> this.updateHeroPosition(hero));
   }
   
-  private void updateHeroPosition(){
+  private void updateNpcs(){
+    npcs.forEach((npc) -> this.updateHeroPosition(npc));
+  }
+  
+  private void updateHeroPosition(Hero hero){
     String direction = hero.getMoveDirection();
     if(direction != null){
-
-      Cell cell = nextCell(direction);
+      checkWin(hero);
+      Cell cell = nextCell(hero.getPosition(), direction);
       if(cell != null){
-        if(cell.isPath() || cell.isStart()){
+        if(cell.isPath() || cell.isStart() || cell.isExit()){
           hero.setPosition(cell.row, cell.col);
-          cell.visit();
-          win = false;
-          setOngoing(true);
-        }else if(cell.isExit()){
-          hero.setPosition(cell.row, cell.col);
-          cell.visit();
-          win = true;
-          setOngoing(false);
+          cell.visit(hero);
         }
       }
     }
   }
   
-  private Cell nextCell(String direction){
-    Point position = hero.getPosition();
+  private void checkWin(Hero hero){
+    Cell cell = maze.getCell((int) hero.getPosition().getX(), (int) hero.getPosition().getY());
+    if(cell.isExit()){
+      win = true;
+      currentTimeTrial().setWinner(hero);
+      setOngoing(false);
+    }
+  }
+  
+  private Cell nextCell(Point position, String direction){
     int posX = (int) position.getX();
     int posY = (int) position.getY();    
     Cell cell = null;
@@ -62,8 +75,34 @@ public class State {
     return cell;
   }
   
-  public void setHero(Hero hero) {
-    this.hero = hero;
+  private TimeTrial currentTimeTrial(){
+    TimeTrial result = null;
+    for (TimeTrial timeTrial : timeTrials) {
+      if (maze == timeTrial.getMaze()) {
+        result = timeTrial;
+      }
+    }
+    return result;
+  }
+  
+  private void updateCurrentTimeTrial(){
+    TimeTrial timeTrial = currentTimeTrial();
+    long updateTime = System.currentTimeMillis();
+    if(ongoing){
+      timeTrial.updateTotalTime(updateTime);
+      timeTrial.setLastStart(updateTime);
+    }else{
+      timeTrial.updateTotalTime(updateTime);
+      timeTrial.setLastStop(updateTime);
+    }
+  }
+  
+  public void setHeroes(ArrayList<Hero> heroes) {
+    this.heroes = heroes;
+  }
+  
+  public void setNpcs(ArrayList<Npc> npcs) {
+    this.npcs = npcs;
   }
 
   public void setMaze(Maze maze) {
@@ -80,5 +119,13 @@ public class State {
 
   public void setOngoing(boolean ongoing) {
     this.ongoing = ongoing;
+  }
+  
+  public String currentState() {
+    return currentState;
+  }
+
+  public void setTimeTrials(ArrayList<TimeTrial> timeTrials) {
+    this.timeTrials = timeTrials;
   }
 }

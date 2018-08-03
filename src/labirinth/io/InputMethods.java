@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import labirinth.engine.Core;
-import labirinth.engine.Hero;
+import labirinth.players.Hero;
 
 // @author yvesmedhard
 
@@ -39,9 +39,7 @@ public class InputMethods implements KeyListener, MouseListener, MouseMotionList
         hero.setMoveDirection("down");
         break;
       case (KeyEvent.VK_ESCAPE):
-        if(!gameCore.isStopGame()){
-          gameCore.stopGame();
-        }else{
+        if(gameCore.isStopGame()){
           gameCore.quitGame();
         }
         break;

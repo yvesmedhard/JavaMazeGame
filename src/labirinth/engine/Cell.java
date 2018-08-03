@@ -1,16 +1,22 @@
 package labirinth.engine;
 // @author yvesmedhard
 
+import java.util.ArrayList;
+import labirinth.players.Hero;
+
+
 public class Cell {
   String type;
   int row;
   int col;
   boolean visited;
+  ArrayList<Hero> visitedBy;
   
   public Cell(String type, int rowIndex, int colIndex) {
     this.type = type;
     this.row = rowIndex;
     this.col =  colIndex;
+    visitedBy = new ArrayList<>();
   }
   
   public String getType(){
@@ -39,19 +45,24 @@ public class Cell {
         result = " ";
         break;
       case "w":
-        result = "#";
+        result = "\u25A0"; // 
         break;
       case "s":
         result = "S";
         break;
       case "e":
-        result = "E";
+        result = "\u2668";
         break;
     }
     return result;
   }
   
-  public void visit(){
+  public boolean isVisitedBy(Hero hero){
+    return visitedBy.contains(hero);
+  }
+  
+  public void visit(Hero hero){
+    visitedBy.add(hero);
     visited = true;
   }
   

@@ -18,9 +18,9 @@ public class Display extends JFrame {
   private void initialize(){
     graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     oldDisplayMode = graphicsDevice.getDisplayMode();
-    newDisplayMode = new DisplayMode(800, 600, 32, 60);
+    newDisplayMode = new DisplayMode(850, 850, 32, 60);
     this.setLayout(null);
-    this.setBounds((oldDisplayMode.getWidth()/2) - 400, (oldDisplayMode.getHeight()/2) - 300, 800, 600);
+    this.setBounds((oldDisplayMode.getWidth()/2) - 480, 0, 850, 850);
     this.setUndecorated(true);
   }
 

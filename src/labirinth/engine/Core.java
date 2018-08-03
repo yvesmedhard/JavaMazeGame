@@ -1,5 +1,6 @@
 package labirinth.engine;
 
+import labirinth.players.Hero;
 import labirinth.io.Display;
 import labirinth.io.InputMethods;
 import java.awt.Color;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import labirinth.players.Npc;
 
 // @author yvesmedhard
 
@@ -16,8 +18,10 @@ public class Core {
   Renderer renderer;
   State state;
   InputMethods inputMethods;
-  Hero hero;
+  ArrayList<Hero> heroes;
+  ArrayList<Npc> npcs;
   ArrayList<String> mazesFiles;
+  ArrayList<TimeTrial> timeTrials;
   Maze maze;
   private boolean stopGame;  
   private boolean quitGame;
@@ -31,7 +35,17 @@ public class Core {
   private void setup(){
     display = new Display();
     inputMethods = new InputMethods();
-    hero = new Hero();
+    
+    heroes = new ArrayList<>();
+    npcs = new ArrayList<>();
+    
+    Hero hero = new Hero();
+    heroes.add(hero);
+    
+    Npc npc = new Npc();
+    npcs.add(npc);
+    
+    timeTrials = new ArrayList<>();
     
     mazesFiles = loadMazesFiles();
     loadMaze(mazesFiles.remove(0));
@@ -51,7 +65,14 @@ public class Core {
     maze = new Maze(filename);
     // Sets Hero into first start position on maze
     Cell startCell = maze.getStartCell();
-    hero.setPosition(startCell.row, startCell.col);
+    heroes.forEach((hero) -> hero.setPosition(startCell.row, startCell.col));
+    npcs.forEach((npc) -> npc.setPosition(startCell.row, startCell.col));
+    startTimeTrial();
+  }
+  
+  public void startTimeTrial(){
+    TimeTrial timeTrial = new TimeTrial(maze);
+    timeTrials.add(timeTrial);    
   }
   
   public void displayStart(){
@@ -67,13 +88,17 @@ public class Core {
   public void rendererLoad(){
     renderer = new Renderer();
     renderer.setDisplay(display);
-    renderer.setHero(hero);
+    renderer.setHeroes(heroes);
+    renderer.setNpcs(npcs);
+    renderer.setTimeTrials(timeTrials);
     renderer.setMaze(maze);
   }
   
   public void stateLoad(){
     state = new State();
-    state.setHero(hero);
+    state.setHeroes(heroes);
+    state.setNpcs(npcs);
+    state.setTimeTrials(timeTrials);
     state.setMaze(maze);
     state.setWin(false);
     state.setOngoing(true);
@@ -100,14 +125,11 @@ public class Core {
   }
   
   public void gameLoop() {
-    long startTime = System.currentTimeMillis();
-    long currentTime = 0;
     while (!isStopGame()) {
-      currentTime = System.currentTimeMillis() - startTime;
       // Updates game state
       updateGame();    
       // Draws game on Display
-      drawGame(currentTime);
+      drawGame();
       // Wait till next frame
       try {
         Thread.sleep(42);
@@ -115,9 +137,14 @@ public class Core {
         Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
-//    while(!isQuitGame()){
-//    }
-    System.out.println(currentTime);
+    while(!isQuitGame()){
+      renderer.drawGameOver(display);
+      try {
+        Thread.sleep(42);
+      } catch (InterruptedException ex) {
+        Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
     displayStop();
   }
   
@@ -133,26 +160,21 @@ public class Core {
     }
   }
   
-  private void drawGame(long currentTime){
+  private void drawGame(){
     if(state.isMaze()){
       renderer.drawMaze(display);
-      renderer.drawHero(display);
+      renderer.drawHeroes(display);
+      renderer.drawNpcs(display);
     }else if(mazesFiles.size() > 0){
       renderer.drawLoadScreen(display);
     }
     // Draws game time
-    drawGameTime(currentTime);
+    renderer.drawTimeTrials(display);
     display.getBstrategy().show();
   }
   
-  private void drawGameTime(long currentTime){
-    Graphics2D g2d = (Graphics2D) display.getBstrategy().getDrawGraphics();
-    g2d.setColor(Color.white);
-    g2d.drawString(Long.toString(currentTime), 750, 10);
-  }
-  
   private ArrayList<String> loadMazesFiles(){
-    ArrayList<String> results = new ArrayList<String>();
+    ArrayList<String> results = new ArrayList<>();
     File[] files = new File("assets\\mazes").listFiles();
     for (File file : files) {
       if (file.isFile()) {

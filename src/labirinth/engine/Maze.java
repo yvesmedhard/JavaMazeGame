@@ -10,15 +10,18 @@ import java.io.IOException;
 public class Maze {
   Cell[][] cells;
   int size;
+  private String name;
   
-  public Maze(Cell[][] cells, int size){
+  public Maze(Cell[][] cells, int size, String name){
     this.cells = cells;
     this.size = size;
+    this.name = name;
   }
   
   public Maze(String filename){
     this.cells = loadMaze(filename);
     this.size = cells.length;
+    this.name = filename;
   }
   
   private Cell[][] loadMaze(String mazeFile){
@@ -85,5 +88,9 @@ public class Maze {
   
   public Cell[][] getCells(){
     return cells;
+  }
+
+  public String getName() {
+    return name;
   }
 }
